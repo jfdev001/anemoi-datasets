@@ -44,5 +44,8 @@ jobs:
               - type: 'config'
                 nouns: ['config', 'conf', 'configuration']
                 labels: ['config']
+              - type: 'chore'
+                nouns: ['chore', 'Chore', 'CHORE']
+                labels: ['chore']
           maintain-labels-not-matched: true
           apply-changes: true
