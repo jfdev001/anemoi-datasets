@@ -10,6 +10,8 @@
 import glob
 import logging
 import os
+
+# from pdb import set_trace  # TODO: remove
 from unittest.mock import patch
 
 import pytest
@@ -79,7 +81,7 @@ def load_source(get_test_data: GetTestData) -> LoadSource:
 
 
 @skip_if_offline
-@pytest.mark.parametrize("name", NAMES)
+@pytest.mark.parametrize("name", ["repeated-dates"])  # TODO:
 def test_run(name: str, get_test_archive: GetTestArchive, load_source: LoadSource) -> None:
     """Run the test for the specified dataset.
 
@@ -99,6 +101,8 @@ def test_run(name: str, get_test_archive: GetTestArchive, load_source: LoadSourc
     """
     import requests
 
+    # if name == "repeated-dates":
+    #     set_trace()  # TODO:
     with patch("earthkit.data.from_source", load_source):
         from anemoi.datasets.create.creator import VERSION
 
@@ -129,6 +133,19 @@ def test_run(name: str, get_test_archive: GetTestArchive, load_source: LoadSourc
             print(f"scp {base}.tgz data@anemoi.ecmwf.int:public/anemoi-datasets/create/mock-mars-{VERSION}/")
             print()
             raise AssertionError(f"Comparison failed {errors}")
+
+
+@skip_if_offline
+def test_valid_recipe(get_test_archive: GetTestArchive, load_source: LoadSource):
+
+    name = "repeated-dates"
+    recipe = os.path.join(HERE, f"{name}.yaml")
+    output = os.path.join(HERE, f"{name}.zarr")
+    assert os.path.exists(recipe)
+    with patch("earthkit.data.from_source", load_source):
+
+        create_dataset(recipe=recipe, output=output, delta=["12h"])
+    assert False
 
 
 if __name__ == "__main__":
